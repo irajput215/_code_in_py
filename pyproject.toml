@@ -1,0 +1,14 @@
+[project]
+name = "coding"
+version = "0.1.0"
+description = "LLD and DSA Practice"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["LLD", "DSA"]

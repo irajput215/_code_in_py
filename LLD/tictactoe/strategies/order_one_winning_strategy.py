@@ -1,22 +1,26 @@
+from typing import Dict, List
 from LLD.tictactoe.strategies.winning_strategy import WinningStrategy
 from LLD.tictactoe.enums.symbol import Symbol
+from LLD.tictactoe.models.board import Board
+from LLD.tictactoe.models.move import Move
 
 # This is an optimized implementation of the WinningStrategy.
 # Time Complexity: O(1) - We don't traverse the whole board.
 # Space Complexity: O(N) - We store counts for each row and column.
 class OrderOneWinningStrategy(WinningStrategy):
-    def __init__(self, size):
-        self.size = size
+    def __init__(self, size: int):
+        self.size: int = size
         # We use counters to track how many symbols are in each row, column, and diagonal.
         # Once a counter reaches 'size', we have a winner!
-        self.row_counts = {Symbol.X: [0] * size, Symbol.O: [0] * size}
-        self.col_counts = {Symbol.X: [0] * size, Symbol.O: [0] * size}
-        self.diag_counts = {Symbol.X: 0, Symbol.O: 0}
-        self.anti_diag_counts = {Symbol.X: 0, Symbol.O: 0}
+        self.row_counts: Dict[Symbol, List[int]] = {Symbol.X: [0] * size, Symbol.O: [0] * size}
+        self.col_counts: Dict[Symbol, List[int]] = {Symbol.X: [0] * size, Symbol.O: [0] * size}
+        self.diag_counts: Dict[Symbol, int] = {Symbol.X: 0, Symbol.O: 0}
+        self.anti_diag_counts: Dict[Symbol, int] = {Symbol.X: 0, Symbol.O: 0}
 
-    def check_winner(self, board, move):
-        row, col = move.row, move.col
-        symbol = move.player.symbol
+    def check_winner(self, board: Board, move: Move) -> bool:
+        row: int = move.row
+        col: int = move.col
+        symbol: Symbol = move.player.symbol
 
         # Update the counts for the current move's row and column.
         self.row_counts[symbol][row] += 1

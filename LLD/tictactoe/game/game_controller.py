@@ -1,34 +1,48 @@
+from typing import List
 from LLD.tictactoe.models.board import Board
 from LLD.tictactoe.models.move import Move
+from LLD.tictactoe.models.player import Player
+from LLD.tictactoe.strategies.winning_strategy import WinningStrategy
 from LLD.tictactoe.enums.game_status import GameStatus
 
 # GameController is the "Orchestrator".
 # It coordinates between models (Board, Player, Move) and strategies.
 # This follows the Dependency Inversion Principle as it depends on an abstraction (WinningStrategy).
 class GameController:
-    def __init__(self, size, players, winning_strategy):
-        self.board = Board(size)
-        self.players = players
-        self.winning_strategy = winning_strategy
-        self.current_player_index = 0
-        self.status = GameStatus.IN_PROGRESS
-        self.moves = []
+    """
+    The GameController demonstrates both Composition and Aggregation:
+    
+    1. Composition (Death Relationship): 
+       - 'self.board' is created inside the constructor. 
+       - The board's lifecycle is tied to the controller; if the controller is destroyed, the board is too.
+    
+    2. Aggregation (Has-a Relationship): 
+       - 'self.players' and 'self.winning_strategy' are passed from outside (Dependency Injection).
+       - They can exist independently of the GameController (e.g., players can exist in a database).
+    """
+    def __init__(self, size: int, players: List[Player], winning_strategy: WinningStrategy):
+        self.board: Board = Board(size)
+        self.players: List[Player] = players
+        self.winning_strategy: WinningStrategy = winning_strategy
+        self.current_player_index: int = 0
+        self.status: GameStatus = GameStatus.IN_PROGRESS
+        self.moves: List[Move] = []
 
-    def get_current_player(self):
+    def get_current_player(self) -> Player:
         return self.players[self.current_player_index]
 
     # This is the main "entry point" for game actions.
-    def make_move(self, row, col):
+    def make_move(self, row: int, col: int) -> None:
         # 1. State check
         if self.status != GameStatus.IN_PROGRESS:
             print("Game is already over.")
             return
 
-        player = self.get_current_player()
-        move = Move(row, col, player)
+        player: Player = self.get_current_player()
+        move: Move = Move(row, col, player)
         
         # 2. Delegate board validation and placement to the Board model.
-        success = self.board.place_move(move)
+        success: bool = self.board.place_move(move)
         if not success:
             print(f"Invalid move by {player.name} at ({row}, {col})")
             return
